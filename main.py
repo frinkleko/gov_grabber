@@ -5,7 +5,7 @@ import os
 # read target xlsx
 data = pd.read_excel('data.xlsx')
 # rename columns
-data.columns = ['province','city','country','url']
+data.columns = ['province','city','country','url','comments']
 # get unique citys
 citys = data['city'].unique()
 province = data['province'].unique()
@@ -31,6 +31,8 @@ for pro in province:
 
         # for each country, download files
         for index, row in data_city.iterrows():
+            if not row['url']:
+                continue
             gov_grabber(url = row['url'],folder_name = row['country'])
         os.chdir('..')
 
