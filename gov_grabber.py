@@ -24,8 +24,9 @@ def downloader(herf,folder_name,main_url = None):
                 file_name = a.string
                 if file_name == None:
                     file_name = str(a).split('<br/>')[0].split('>')[1]
-                file_name = file_name.split('/')[0]
-                print('Downloaing {}...'.format(file_name))
+                # 过滤出中文和数字
+                file_name = re.sub("[^\u4e00-\u9fa5^0-9]", "", file_name)
+                print('Downloaing {}.{}...'.format(file_name,file_extention))
                 if not os.path.exists(folder_name+'/'+'{}.{}'.format(file_name,file_extention)):
                     with open(folder_name+'/'+'{}.{}'.format(file_name,file_extention),'wb') as f:
                         try:
