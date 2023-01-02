@@ -63,7 +63,7 @@ def gov_grabber(url = None, folder_name = None, file_extention = 'pdf'):
         if not herf:
             continue
 
-        if herf.split('/')[-1] == 'index.html' or not herf.endswith('.html'):
+        if not herf.endswith('.html'):
             continue
         downloader(herf,folder_name,main_url)
 
