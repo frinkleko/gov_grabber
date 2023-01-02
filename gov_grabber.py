@@ -4,15 +4,23 @@ from bs4 import BeautifulSoup
 import os
 import sys
 
-def downloader(herf,folder_name,main_url = None):
+# for encoding detection
+import chardet
+
+def downloader(herf,folder_name,main_url = None,encoding = 'gbk'):
     # refill the url with main url if it is missing
     try:
         req = requests.get(herf)
     except requests.exceptions.MissingSchema:
-        req = requests.get(main_url + herf)
+        try:
+            req = requests.get(main_url + herf)
+        except:
+            req = requests.get(main_url + '/' + herf)
+    except:
+        return 
 
     # most of the time, the encoding is gbk
-    req.encoding = 'gbk'
+    req.encoding = encoding
     soup = BeautifulSoup(req.text, "html.parser")
     all_a = soup.find_all('a')
 
@@ -49,7 +57,10 @@ def downloader(herf,folder_name,main_url = None):
                         try:
                             response = requests.get(filtered_href.string)
                         except requests.exceptions.MissingSchema:
-                            response = requests.get(main_url  + filtered_href.string)
+                            try:
+                                response = requests.get(main_url + herf)
+                            except:
+                                response = requests.get(main_url + '/' + herf)
                         f.write(response.content)
 
 def gov_grabber(url = None, folder_name = None, file_extention = 'pdf'):
@@ -61,13 +72,26 @@ def gov_grabber(url = None, folder_name = None, file_extention = 'pdf'):
     
     # get the main url
     main_url = url.split('/col')[0]
+    if main_url == url:
+        main_url = url.split('/')
+        for i in main_url:
+            if i.endswith('.cn'):
+                main_url = i
+                break
+    if not main_url.startswith('http'):
+        main_url = 'http://' + main_url
     print(main_url)
 
     # process the first page
-    req = requests.get(url)
+    UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
+    req = requests.get(url,headers = {'User-Agent': UA})
+
+    # detect the encoding
+    result = chardet.detect(req.content)
+    req.encoding = result['encoding']
+
     soup = BeautifulSoup(req.text, "html.parser")
     all_a = soup.find_all('a')
-
     # create the folder
     if not os.path.exists(folder_name):
         os.mkdir(folder_name)
@@ -79,10 +103,10 @@ def gov_grabber(url = None, folder_name = None, file_extention = 'pdf'):
         # process second page
         if not herf:
             continue
-
-        if not herf.endswith('.html'):
+        if herf.startswith('javascript'):
             continue
-        downloader(herf,folder_name,main_url)
+        # just download if not success this function will just return nothing
+        downloader(herf,folder_name,main_url,encoding = req.encoding)
 
 if __name__ == '__main__':
-    gov_grabber(url = 'http://www.sjzjx.gov.cn/col/1580696057686/index.html',folder_name = 'test')
+    gov_grabber(url = 'http://www.dingxing.gov.cn/czyslist-394-more.html',folder_name = 'test')

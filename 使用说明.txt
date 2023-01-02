@@ -5,5 +5,5 @@
 2. 填写 xlsx表格
 3. 安装python和其对应包。
 首先你需要安装python
-你需要安装 pandas 。在终端中输入 pip install pandas 即可
+你需要安装 pandas, chardet 。在终端中输入 pip install pandas chardet 即可
 4. 在终端中输入 python main.py 即可
