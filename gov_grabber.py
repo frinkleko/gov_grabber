@@ -5,29 +5,46 @@ import os
 import sys
 
 def downloader(herf,folder_name,main_url = None):
+    # refill the url with main url if it is missing
     try:
         req = requests.get(herf)
     except requests.exceptions.MissingSchema:
         req = requests.get(main_url + herf)
+
+    # most of the time, the encoding is gbk
     req.encoding = 'gbk'
     soup = BeautifulSoup(req.text, "html.parser")
     all_a = soup.find_all('a')
+
+    # filter out the file with the extention
     file_extentions = ['pdf','doc','docx','xls','xlsx','rar','zip']
+
     for file_extention in file_extentions:
         for a in all_a:
             herf_ = a.get('href')
             if not herf_:
                 continue
+                
+            # filter all herf with the extention
             file_pattern = ".*." + file_extention + "$"
             filtered_href = re.match(file_pattern, herf_)
+
+            # get file name
             if filtered_href:
                 file_name = a.string
                 if file_name == None:
                     file_name = str(a).split('<br/>')[0].split('>')[1]
-                # 过滤出中文和数字
+                
+                # filter out the chinese characters and numbers
                 file_name = re.sub("[^\u4e00-\u9fa5^0-9]", "", file_name)
+
+                # download the file
                 print('Downloaing {}.{}...'.format(file_name,file_extention))
+
+                # check if the file exists
                 if not os.path.exists(folder_name+'/'+'{}.{}'.format(file_name,file_extention)):
+
+                    # download the file
                     with open(folder_name+'/'+'{}.{}'.format(file_name,file_extention),'wb') as f:
                         try:
                             response = requests.get(filtered_href.string)
@@ -37,14 +54,14 @@ def downloader(herf,folder_name,main_url = None):
 
 def gov_grabber(url = None, folder_name = None, file_extention = 'pdf'):
 
+    # use command line to input url and folder name
     if len(sys.argv)<2 and (url == None or folder_name == None):
         print("Please input the url and folder name")
         return
     
+    # get the main url
     main_url = url.split('/col')[0]
     print(main_url)
-
-    #file_extentions = ['pdf','doc','xls']
 
     # process the first page
     req = requests.get(url)
