@@ -10,17 +10,17 @@
 使用分为以下几步：
 
 1. 使用终端，切换至当前工作目录。（在终端中输入 cd 当前目录位置即可）
-  例: cd D:\gov_grabber
+    例: cd D:\gov_grabber
 
 2. 填写 xlsx表格
 
-   结构为省、市、县、对应目录。
+   结构为省、市、县、对应目录，备注。
 
    其中目录中各条目对应带有附件的单独新页面。可于本项目`data.xlsx`进一步查看。
 
 3. 安装python和其对应包。
-  首先你需要安装python。
-  其次你需要安装 pandas, chardet 。在终端中输入 pip install pandas chardet 即可
+    首先你需要安装python。
+    其次你需要安装 pandas, chardet 。在终端中输入 pip install pandas chardet 即可
 
 4. 在终端中输入 python main.py 即可
 
