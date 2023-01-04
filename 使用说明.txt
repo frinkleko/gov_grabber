@@ -22,7 +22,7 @@
 
 3. 安装python和其对应包。
    首先你需要安装python。
-     其次你需要安装 pandas, chardet 。在终端中输入 pip install pandas chardet 即可
+     其次你需要安装 pandas, chardet, requests, bs4 。在终端中输入  pip install pandas chardet requests bs4 即可
 
 4. 在终端中输入 python main.py 即可
 
